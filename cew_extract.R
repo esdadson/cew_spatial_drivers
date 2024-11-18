@@ -17,7 +17,11 @@ plot(trap_vect)
 cdl_path <- "/Volumes/cmjone25/Data/Raster/USA/landcover/"
 cdl_2020 <- rast(paste0(cdl_path, "2020_30m_cdls/2020_30m_cdls.tif"))
 
-# the CDL data is large, we need to crop the data to our study area, but first we need to ensure the data are in the same coordinate reference system (CRS). This is how we are able to preserve the integrity of operations on spatial data. We first insure the spatial data are speaking in the same language (CRS), then we can perform operations.
+# the CDL data is large, we need to crop the data to our study area, but first 
+# we need to ensure the data are in the same coordinate reference system (CRS). 
+# This is how we are able to preserve the integrity of operations on spatial data. 
+# We first insure the spatial data are speaking in the same language (CRS), then 
+# we can perform operations.
 trap_vect <- project(trap_vect, crs(cdl_2020))
 cdl_2020_cropped <- crop(cdl_2020, trap_vect)
 plot(cdl_2020_cropped)
