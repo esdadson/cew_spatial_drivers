@@ -1,5 +1,5 @@
-install.packages('terra', repos='https://rspatial.r-universe.dev')
-install.packages("landscapemetrics")
+# install.packages('terra', repos='https://rspatial.r-universe.dev')
+# install.packages("landscapemetrics")
 library(landscapemetrics)
 library(terra)
 
