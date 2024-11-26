@@ -1,5 +1,5 @@
-# install.packages('terra', repos='https://rspatial.r-universe.dev')
-# install.packages("landscapemetrics")
+install.packages('terra', repos='https://rspatial.r-universe.dev')
+install.packages("landscapemetrics")
 library(landscapemetrics)
 library(terra)
 
@@ -27,10 +27,19 @@ cdl_2020_cropped <- crop(cdl_2020, trap_vect)
 plot(cdl_2020_cropped)
 plot(trap_vect, add = T)
 
-> extract_metrics <- sample_lsm(cdl_2020,
-                                traps_2020,
-                                size = c(1000),
-                                metric = 'area', 
-                                level = "class",
-                                plot_id = traps_2020$trapID,
-                                shape = 'circle')
+extract_metrics <- sample_lsm(cdl_2020,
+                              trap_vect,
+                              size = c(1000),
+                              metric = 'area', 
+                              level = "class",
+                              plot_id = trap_vect$trapID,
+                              shape = 'circle')
+
+# example extracting landscape information
+trap_point <- trap_data[1,]
+trap_geo <- terra::vect(trap_point, geom = c("long", "lat"), crs = "EPSG:4326")
+trap_geo <- terra::project(trap_geo, crs(cdl_2020))
+trap_buffer <- terra::buffer(trap_geo, 1000)
+trap_extract <- terra::extract(cdl_2020, trap_buffer)
+percent_corn_1k <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+percent_primary_1k <- sum(table(trap_extract)[,c("Corn","Cotton")])/nrow(trap_extract)
