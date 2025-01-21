@@ -67,10 +67,14 @@ for (year in seq(2020, 2023)) {
   trap_extract <- terra::extract(cdl_data, trap_buffer)
   trap_year$percent_corn <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
   trap_year$percent_cotton <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
-  assign(paste0("trap_", year))
+  assign(paste0("trap_", year), trap_year)
 }
 
 trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
+trap_vect <- project(trap_vect, "EPSG:4326")
+trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
+                   lat = crds(trap_vect)[,2])
+write_csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
 
 # example extracting landscape information
 trap_point <- trap_data[1,]
