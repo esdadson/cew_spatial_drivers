@@ -67,6 +67,18 @@ for (year in seq(2020, 2023)) {
   trap_extract <- terra::extract(cdl_data, trap_buffer)
   trap_year$percent_corn <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
   trap_year$percent_cotton <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                            table(trap_extract)[,c("Cotton")],
+                            table(trap_extract)[,c("Peanuts")],
+                            table(trap_extract)[,c("Soybeans")],
+                            table(trap_extract)[,c("Sorghum")],
+                            table(trap_extract)[,c("Sweet Corn")],
+                            table(trap_extract)[,c("Tobacco")])
   assign(paste0("trap_", year), trap_year)
 }
 
@@ -84,3 +96,4 @@ trap_buffer <- terra::buffer(trap_geo, 1000)
 trap_extract <- terra::extract(cdl_2020, trap_buffer)
 percent_corn_1k <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
 percent_primary_1k <- sum(table(trap_extract)[,c("Corn","Cotton")])/nrow(trap_extract)
+
