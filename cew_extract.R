@@ -6,6 +6,7 @@
 # renv::update()
 library(terra)
 library(landscapemetrics)
+library(tidyverse)
 
 # load trapping data into the workspace
 data_dir <- "/Volumes/cmjone25/Data/Original/pest-occurrence/corn_earworm/"
@@ -13,6 +14,15 @@ output_dir <- "/Volumes/cmjone25/Data/Raster/USA/pops_casestudies/corn_earworm/o
 trap_data <- read.csv(paste(data_dir, 
                             "trap_network_2020_21_22_23_24_counts.csv", 
                             sep = ""))
+
+trap_data$CEW_count <- as.numeric(trap_data$CEW_count)
+trap_data <- trap_data %>%
+  select(trapID, year, county, lat, long, CEW_count) %>%
+  group_by(trapID, year) %>%
+  summarize(cum_CEW_count = sum(CEW_count, na.rm = T),
+            lat = lat[1],
+            long = long[2],
+            county = county[1])
 
 # View first 6 rows
 head(trap_data)
