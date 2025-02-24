@@ -1,0 +1,171 @@
+---
+title: "Corn Earworm (CEW) Analysis"
+author: "Evan Dadson and Andrew Keziah"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    fig_caption: true
+mainfont: Times New Roman
+fontsize: 12pt
+geometry: margin=1in
+---
+
+# Introduction to R
+
+R can be used in the command line, in scrips with the .R extension, or in integrated development environments (IDEs) (e.g. RStudio, Jupyter Notebooks, Jupyterlab, etc.). The easiest way to use R is with RStudio. An IDE allows you to write code and test output all in one place, and is more robust than other methods (e.g. shell scripting in the terminal).
+
+####R as a Calculator
+
+```{r}
+1+1
+```
+
+```{r}
+x=3
+x*5
+```
+
+```{r}
+# This is a comment
+# Comments aren't processed like lines of code
+# This provides clarity for people to review and repeat your code
+```
+
+```{r}
+# In most programming languages, you must end an executable line of code with a
+# semicolon. 
+# In R this is optional.
+x = 6;
+x = 5; y = 7 # you can execute multiple statements on the same line
+```
+
+Practice by uncommenting this line of code. Does it work?
+```{r}
+# y = 5 y = 7
+```
+
+## Variables and operations
+
+There are a few data types in R. The main ones we care about are integers, characters, and doubles.
+
+```{r}
+a <- 12 # this is an integer
+b <- "Hello, world!" # this is a character
+c <- 12.12 # this is a double
+```
+
+Now that we have created some variables using our basic data types, let's print them out to the console.
+```{r}
+a
+b
+c
+# or we can use better printing
+print(b)
+print(paste(b, "In the U.S., you finish high school in the", a, "th grade."))
+```
+
+Let's jump into some more complex data structures: vectors, matricies, and lists. First, vectors are list of elements that are of the same length. For example, (1, 2, 3, 4), is a vector of integers and is length 4. In R, we can make the previous vector like so,
+```{r}
+c(1,2,3,4)
+# now we can give this vector a name
+first_vector <- c(1,2,3,4)
+class(first_vector) # what is the data type?
+str(first_vector) # what is the data structure?
+length(first_vector)
+# we can see that we have created a numeric vector of length 4.
+```
+
+What if we wanted to make a matrix. This can be tought of as a vector that is of size n x m.
+
+## Analysis
+To start our analysis we first need to examine the data. 
+```{r}
+data_dir <- "/Volumes/cmjone25/Data/Original/pest-occurrence/corn_earworm/"
+output_dir <- "/Volumes/cmjone25/Data/Raster/USA/pops_casestudies/corn_earworm/outputs"
+trap_data = read.csv(paste0(output_dir, "/traps_extracted_data.csv"))
+```
+
+```{r}
+head(trap_data)
+dim(trap_data)
+```
+
+```{r}
+lm_fit <- lm(cum_CEW_count ~ percent_corn + percent_cotton + percent_peanuts + percent_soybeans + percent_sorghum + percent_sweetcorn + percent_tobacco + egg_area + factor(year), data = trap_data)
+summary(lm_fit)
+```
+
+## Visualization
+
+### base R plotting
+
+The R programming language has a number of built in functions we can use to plot and visualize things.
+```{r}
+trap_data_2020 <- trap_data[trap_data$year == 2020, ]
+trap_data_2021 <- trap_data[trap_data$year == 2021, ]
+trap_data_2022 <- trap_data[trap_data$year == 2022, ]
+trap_data_2023 <- trap_data[trap_data$year == 2023, ]
+rbPal <- colorRampPalette(c('red', 'blue'))
+intervals_2020 <- cut(trap_data_2020$cum_CEW_count, breaks = 5)
+col_vals_2020 <- rbPal(10)[as.numeric(intervals_2020)]
+intervals_2021 <- cut(trap_data_2021$cum_CEW_count, breaks = 5)
+col_vals_2021 <- rbPal(10)[as.numeric(intervals_2021)]
+intervals_2022 <- cut(trap_data_2022$cum_CEW_count, breaks = 5)
+col_vals_2022 <- rbPal(10)[as.numeric(intervals_2022)]
+intervals_2023 <- cut(trap_data_2023$cum_CEW_count, breaks = 5)
+col_vals_2023 <- rbPal(10)[as.numeric(intervals_2023)]
+```
+
+```{r, fig.asp=1}
+# 2020
+plot(trap_data_2020$long, trap_data_2020$lat, col = col_vals_2020, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2020")
+legend("bottomright", title="catch",legend=levels(intervals_2020),
+       col=rbPal(10), pch=20)
+```
+
+```{r, fig.asp=1}
+# 2021
+plot(trap_data_2021$long, trap_data_2021$lat, col = col_vals_2021, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2020")
+legend("bottomright", title="catch",legend=levels(intervals_2021),
+       col=rbPal(10), pch=20)
+```
+
+```{r, fig.asp=1}
+# 2022
+plot(trap_data_2022$long, trap_data_2022$lat, col = col_vals_2022, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2020")
+legend("bottomright", title="catch",legend=levels(intervals_2022),
+       col=rbPal(10), pch=20)
+```
+
+```{r, fig.asp=1}
+# 2023
+plot(trap_data_2023$long, trap_data_2023$lat, col = col_vals_2023, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2020")
+legend("bottomright", title="catch",legend=levels(intervals_2023),
+       col=rbPal(10), pch=20)
+```
+
+Wow! That was a lot of writing to get these plots. They are good, but they could be a whole lot better. The `ggplot2` package has a lot of helpful tools for better and more visually appealing plots.
+
+### ggplot2 plotting
+
+```{r, fig.asp = 1}
+library(ggplot2)
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = cum_CEW_count), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+```
