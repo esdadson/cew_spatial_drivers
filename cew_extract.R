@@ -82,13 +82,13 @@ for (year in seq(2020, 2023)) {
   trap_year$percent_sorghum <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
   trap_year$percent_sweetcorn <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
   trap_year$percent_tobacco <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
-  trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
-                            table(trap_extract)[,c("Cotton")],
-                            table(trap_extract)[,c("Peanuts")],
-                            table(trap_extract)[,c("Soybeans")],
-                            table(trap_extract)[,c("Sorghum")],
-                            table(trap_extract)[,c("Sweet Corn")],
-                            table(trap_extract)[,c("Tobacco")])
+  trap_year$egg_area <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                  table(trap_extract)[,c("Cotton")],
+                                  table(trap_extract)[,c("Peanuts")],
+                                  table(trap_extract)[,c("Soybeans")],
+                                  table(trap_extract)[,c("Sorghum")],
+                                  table(trap_extract)[,c("Sweet Corn")],
+                                  table(trap_extract)[,c("Tobacco")]))
   assign(paste0("trap_", year), trap_year)
 }
 
@@ -96,7 +96,7 @@ trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
 trap_vect <- project(trap_vect, "EPSG:4326")
 trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
                    lat = crds(trap_vect)[,2])
-write_csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+write.csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
 
 # example extracting landscape information
 trap_point <- trap_data[1,]
