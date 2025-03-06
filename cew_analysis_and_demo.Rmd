@@ -14,7 +14,7 @@ geometry: margin=1in
 
 R can be used in the command line, in scrips with the .R extension, or in integrated development environments (IDEs) (e.g. RStudio, Jupyter Notebooks, Jupyterlab, etc.). The easiest way to use R is with RStudio. An IDE allows you to write code and test output all in one place, and is more robust than other methods (e.g. shell scripting in the terminal).
 
-####R as a Calculator
+#### R as a Calculator
 
 ```{r}
 1+1
@@ -23,6 +23,38 @@ R can be used in the command line, in scrips with the .R extension, or in integr
 ```{r}
 x=3
 x*5
+y=x*5
+```
+
+Vector practice. Building up to plot y = x^2.
+
+```{r}
+x = c(-5,-4,-3,-2,-1,0,1,2,3,4,5)
+x[1]
+x[11]
+x[20]
+```
+
+Now we can define y.
+```{r}
+y <- x^2
+y <- x*2
+```
+
+```{r}
+plot(x=x,y=y)
+```
+
+```{r}
+plot(x=x,y=y, type = 'b')
+```
+
+```{r}
+x <- seq(from = -5, to = 5, length.out = 1000)
+```
+
+```{r}
+plot(x=x, y=x^2, type = 'l')
 ```
 
 ```{r}
@@ -54,6 +86,13 @@ b <- "Hello, world!" # this is a character
 c <- 12.12 # this is a double
 ```
 
+```{r}
+# a*c
+# a*b
+# d = "1"
+# a*d
+```
+
 Now that we have created some variables using our basic data types, let's print them out to the console.
 ```{r}
 a
@@ -62,6 +101,54 @@ c
 # or we can use better printing
 print(b)
 print(paste(b, "In the U.S., you finish high school in the", a, "th grade."))
+```
+
+```{r}
+unknown_c <- seq(-5, 5, length.out= 1000)
+
+print(unknown_c[599])
+```
+
+### Beginning loops
+
+```{r}
+for (i in 1:1000) {
+  print(i)
+}
+```
+
+What is each element of unknown_c?
+
+```{r}
+for (i in 1:1000) {
+  print(unknown_c[i])
+}
+```
+
+```{r}
+a = 1
+b = 2
+a == b
+a = TRUE
+b = FALSE
+a == b
+a & b
+a | b
+a != b
+```
+
+```{r}
+for (i in 1:1000) {
+  print(unknown_c[i] == 0)
+}
+```
+
+```{r}
+for (i in 1:1000) {
+  if (unknown_c[i] >= 0) {
+    print(unknown_c[i])
+  }
+}
 ```
 
 Let's jump into some more complex data structures: vectors, matricies, and lists. First, vectors are list of elements that are of the same length. For example, (1, 2, 3, 4), is a vector of integers and is length 4. In R, we can make the previous vector like so,
@@ -88,6 +175,14 @@ trap_data = read.csv(paste0(output_dir, "/traps_extracted_data.csv"))
 ```{r}
 head(trap_data)
 dim(trap_data)
+```
+```{r}
+hist(trap_data$percent_corn)
+hist(trap_data$percent_soybeans)
+```
+
+```{r}
+plot(trap_data$percent_cotton, trap_data$cum_CEW_count)
 ```
 
 ```{r}
@@ -129,7 +224,7 @@ legend("bottomright", title="catch",legend=levels(intervals_2020),
 # 2021
 plot(trap_data_2021$long, trap_data_2021$lat, col = col_vals_2021, pch = 20,
      cex = 3, xlab = "Longitude", ylab = "Latitude", 
-     main = "Cumulative CEW Catch 2020")
+     main = "Cumulative CEW Catch 2021")
 legend("bottomright", title="catch",legend=levels(intervals_2021),
        col=rbPal(10), pch=20)
 ```
@@ -167,5 +262,37 @@ ggplot(trap_data, aes(x=long, y=lat)) +
                         na.value = NA) + 
   coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
                  ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+```
+
+```{r, fig.asp = 1}
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = percent_corn), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), 
+                         name = "cumulative CEW \nCatch",
+                         na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) +
+  labs(xlab = "Longitude", ylab = "Latitude", 
+       title = "Cumulative moth capture vs percent corn") + 
+  facet_wrap(~year)
+```
+
+```{r, fig.asp = 1}
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = egg_area), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), 
+                         name = "cumulative CEW \nCatch",
+                         na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) +
+  labs(xlab = "Longitude", ylab = "Latitude", 
+       title = "Cumulative moth capture vs egg area") + 
   facet_wrap(~year)
 ```
