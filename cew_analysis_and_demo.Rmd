@@ -14,7 +14,7 @@ geometry: margin=1in
 
 R can be used in the command line, in scrips with the .R extension, or in integrated development environments (IDEs) (e.g. RStudio, Jupyter Notebooks, Jupyterlab, etc.). The easiest way to use R is with RStudio. An IDE allows you to write code and test output all in one place, and is more robust than other methods (e.g. shell scripting in the terminal).
 
-#### R as a Calculator
+####R as a Calculator
 
 ```{r}
 1+1
@@ -23,38 +23,6 @@ R can be used in the command line, in scrips with the .R extension, or in integr
 ```{r}
 x=3
 x*5
-y=x*5
-```
-
-Vector practice. Building up to plot y = x^2.
-
-```{r}
-x = c(-5,-4,-3,-2,-1,0,1,2,3,4,5)
-x[1]
-x[11]
-x[20]
-```
-
-Now we can define y.
-```{r}
-y <- x^2
-y <- x*2
-```
-
-```{r}
-plot(x=x,y=y)
-```
-
-```{r}
-plot(x=x,y=y, type = 'b')
-```
-
-```{r}
-x <- seq(from = -5, to = 5, length.out = 1000)
-```
-
-```{r}
-plot(x=x, y=x^2, type = 'l')
 ```
 
 ```{r}
@@ -86,13 +54,6 @@ b <- "Hello, world!" # this is a character
 c <- 12.12 # this is a double
 ```
 
-```{r}
-# a*c
-# a*b
-# d = "1"
-# a*d
-```
-
 Now that we have created some variables using our basic data types, let's print them out to the console.
 ```{r}
 a
@@ -101,54 +62,6 @@ c
 # or we can use better printing
 print(b)
 print(paste(b, "In the U.S., you finish high school in the", a, "th grade."))
-```
-
-```{r}
-unknown_c <- seq(-5, 5, length.out= 1000)
-
-print(unknown_c[599])
-```
-
-### Beginning loops
-
-```{r}
-for (i in 1:1000) {
-  print(i)
-}
-```
-
-What is each element of unknown_c?
-
-```{r}
-for (i in 1:1000) {
-  print(unknown_c[i])
-}
-```
-
-```{r}
-a = 1
-b = 2
-a == b
-a = TRUE
-b = FALSE
-a == b
-a & b
-a | b
-a != b
-```
-
-```{r}
-for (i in 1:1000) {
-  print(unknown_c[i] == 0)
-}
-```
-
-```{r}
-for (i in 1:1000) {
-  if (unknown_c[i] >= 0) {
-    print(unknown_c[i])
-  }
-}
 ```
 
 Let's jump into some more complex data structures: vectors, matricies, and lists. First, vectors are list of elements that are of the same length. For example, (1, 2, 3, 4), is a vector of integers and is length 4. In R, we can make the previous vector like so,
@@ -176,14 +89,6 @@ trap_data = read.csv(paste0(output_dir, "/traps_extracted_data.csv"))
 head(trap_data)
 dim(trap_data)
 ```
-```{r}
-hist(trap_data$percent_corn)
-hist(trap_data$percent_soybeans)
-```
-
-```{r}
-plot(trap_data$percent_cotton, trap_data$cum_CEW_count)
-```
 
 ```{r}
 lm_fit <- lm(cum_CEW_count ~ percent_corn + percent_cotton + percent_peanuts + percent_soybeans + percent_sorghum + percent_sweetcorn + percent_tobacco + egg_area + factor(year), data = trap_data)
@@ -200,7 +105,7 @@ trap_data_2020 <- trap_data[trap_data$year == 2020, ]
 trap_data_2021 <- trap_data[trap_data$year == 2021, ]
 trap_data_2022 <- trap_data[trap_data$year == 2022, ]
 trap_data_2023 <- trap_data[trap_data$year == 2023, ]
-rbPal <- colorRampPalette(c('red', 'blue'))
+rbPal <- colorRampPalette(c('blue', 'red'))
 intervals_2020 <- cut(trap_data_2020$cum_CEW_count, breaks = 5)
 col_vals_2020 <- rbPal(10)[as.numeric(intervals_2020)]
 intervals_2021 <- cut(trap_data_2021$cum_CEW_count, breaks = 5)
@@ -224,7 +129,7 @@ legend("bottomright", title="catch",legend=levels(intervals_2020),
 # 2021
 plot(trap_data_2021$long, trap_data_2021$lat, col = col_vals_2021, pch = 20,
      cex = 3, xlab = "Longitude", ylab = "Latitude", 
-     main = "Cumulative CEW Catch 2021")
+     main = "Cumulative CEW Catch 2020")
 legend("bottomright", title="catch",legend=levels(intervals_2021),
        col=rbPal(10), pch=20)
 ```
@@ -251,6 +156,7 @@ Wow! That was a lot of writing to get these plots. They are good, but they could
 
 ### ggplot2 plotting
 
+#Backup
 ```{r, fig.asp = 1}
 library(ggplot2)
 nc_map=map_data("county", region = "north carolina")
@@ -266,33 +172,261 @@ ggplot(trap_data, aes(x=long, y=lat)) +
 ```
 
 ```{r, fig.asp = 1}
+library(ggplot2)
 nc_map=map_data("county", region = "north carolina")
 ggplot(trap_data, aes(x=long, y=lat)) + 
   geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
                linewidth = 1, col = "grey40", fill = NA) + 
   geom_point(aes(colour = cum_CEW_count, size = percent_corn), shape = 20) + 
-  scale_colour_gradientn(colors = rbPal(10), 
-                         name = "cumulative CEW \nCatch",
-                         na.value = NA) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
   coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
-                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) +
-  labs(xlab = "Longitude", ylab = "Latitude", 
-       title = "Cumulative moth capture vs percent corn") + 
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
   facet_wrap(~year)
 ```
 
 ```{r, fig.asp = 1}
+library(ggplot2)
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = percent_soybeans), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+```
+
+```{r, fig.asp = 1}
+library(ggplot2)
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = percent_cotton), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+```
+
+```{r, fig.asp = 1}
+library(ggplot2)
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = percent_peanuts), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+```
+
+```{r, fig.asp = 1}
+library(ggplot2)
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = percent_tobacco), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+```
+
+```{r, fig.asp = 1}
+library(ggplot2)
+nc_map=map_data("county", region = "north carolina")
+ggplot(trap_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = cum_CEW_count, size = ), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+```
+
+```{r, fig.asp = 1}
+library(ggplot2)
 nc_map=map_data("county", region = "north carolina")
 ggplot(trap_data, aes(x=long, y=lat)) + 
   geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
                linewidth = 1, col = "grey40", fill = NA) + 
   geom_point(aes(colour = cum_CEW_count, size = egg_area), shape = 20) + 
-  scale_colour_gradientn(colors = rbPal(10), 
-                         name = "cumulative CEW \nCatch",
-                         na.value = NA) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                        na.value = NA) + 
   coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
-                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) +
-  labs(xlab = "Longitude", ylab = "Latitude", 
-       title = "Cumulative moth capture vs egg area") + 
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
   facet_wrap(~year)
 ```
+
+#New Buffer Hard-Code - 200m
+```{r}
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 200)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                            table(trap_extract)[,c("Cotton")],
+                            table(trap_extract)[,c("Peanuts")],
+                            table(trap_extract)[,c("Soybeans")],
+                            table(trap_extract)[,c("Sorghum")],
+                            table(trap_extract)[,c("Sweet Corn")],
+                            table(trap_extract)[,c("Tobacco")])
+  assign(paste0("trap_", year), trap_year)
+}
+
+trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
+trap_vect <- project(trap_vect, "EPSG:4326")
+trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
+                   lat = crds(trap_vect)[,2])
+write_csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+```
+
+# Buffer 500
+```{r}
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 500)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                            table(trap_extract)[,c("Cotton")],
+                            table(trap_extract)[,c("Peanuts")],
+                            table(trap_extract)[,c("Soybeans")],
+                            table(trap_extract)[,c("Sorghum")],
+                            table(trap_extract)[,c("Sweet Corn")],
+                            table(trap_extract)[,c("Tobacco")])
+  assign(paste0("trap_", year), trap_year)
+}
+
+trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
+trap_vect <- project(trap_vect, "EPSG:4326")
+trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
+                   lat = crds(trap_vect)[,2])
+write_csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+```
+
+#Buffer 800
+```{r}
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 800)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                            table(trap_extract)[,c("Cotton")],
+                            table(trap_extract)[,c("Peanuts")],
+                            table(trap_extract)[,c("Soybeans")],
+                            table(trap_extract)[,c("Sorghum")],
+                            table(trap_extract)[,c("Sweet Corn")],
+                            table(trap_extract)[,c("Tobacco")])
+  assign(paste0("trap_", year), trap_year)
+}
+
+trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
+trap_vect <- project(trap_vect, "EPSG:4326")
+trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
+                   lat = crds(trap_vect)[,2])
+write_csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+```
+
+#Buffer 1000
+```{r}
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 1000)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                            table(trap_extract)[,c("Cotton")],
+                            table(trap_extract)[,c("Peanuts")],
+                            table(trap_extract)[,c("Soybeans")],
+                            table(trap_extract)[,c("Sorghum")],
+                            table(trap_extract)[,c("Sweet Corn")],
+                            table(trap_extract)[,c("Tobacco")])
+  assign(paste0("trap_", year), trap_year)
+}
+
+trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
+trap_vect <- project(trap_vect, "EPSG:4326")
+trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
+                   lat = crds(trap_vect)[,2])
+write_csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+```
+
+```{r}
+
+buffer_lengths <- c(200, 400, 600, 800, 1000, 1200)
+for (year in 2020:2023) {
+  for (buffer in buffer_lengths) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                            table(trap_extract)[,c("Cotton")],
+                            table(trap_extract)[,c("Peanuts")],
+                            table(trap_extract)[,c("Soybeans")],
+                            table(trap_extract)[,c("Sorghum")],
+                            table(trap_extract)[,c("Sweet Corn")],
+                            table(trap_extract)[,c("Tobacco")])
+  assign(paste0("trap_", year), trap_year)
+}
+}
+trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
+trap_vect <- project(trap_vect, "EPSG:4326")
+trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
+                   lat = crds(trap_vect)[,2])
+write_csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+```
+
