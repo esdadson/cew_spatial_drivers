@@ -137,15 +137,13 @@ for (year in 2020:2023) {
       }
     }
     
-    trap_year$egg_area <- sum(
-      sapply(crop_list, function(crop) {
-        if (crop %in% colnames(table(trap_extract))) {
-          sum(table(trap_extract)[,crop])
-        } else {
-          0
-        }
-      })
-    )
+    trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                              table(trap_extract)[,c("Cotton")],
+                              table(trap_extract)[,c("Peanuts")],
+                              table(trap_extract)[,c("Soybeans")],
+                              table(trap_extract)[,c("Sorghum")],
+                              table(trap_extract)[,c("Sweet Corn")],
+                              table(trap_extract)[,c("Tobacco")])
     trap_year$year <- year
     trap_year$buffer <- buffer
     
