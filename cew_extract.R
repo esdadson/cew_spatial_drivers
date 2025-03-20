@@ -158,3 +158,53 @@ for (year in 2020:2023) {
 }
 combined_data <- do.call(rbind, all_data)
 write_csv(combined_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+
+# Buffer lengths 500 to 5000
+
+buffer_lengths_new <- c(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)
+
+all_data <- list()
+
+for (year in 2020:2023) {
+  for (buffer in buffer_lengths_new) {
+    
+    cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+    cdl_data <- crop(cdl_data, empty_vect)
+    
+    trap_year <- trap_vect[trap_vect$year == year,]
+    
+    trap_buffer <- buffer(trap_year, width = buffer)
+    
+    trap_extract <- terra::extract(cdl_data, trap_buffer)
+    
+    crop_list <- c("Corn", "Cotton", "Peanuts", "Soybeans", "Sorghum", "Sweet Corn", "Tobacco")
+    
+    for (crop in crop_list) {
+      if (crop %in% colnames(table(trap_extract))) {
+        trap_year[[paste0("percent_", tolower(gsub(" ", "", crop)))]] <- table(trap_extract)[,crop] / nrow(trap_extract)
+      } else {
+        trap_year[[paste0("percent_", tolower(gsub(" ", "", crop)))]] <- 0
+      }
+    }
+    
+    trap_year$egg_area <- sum(table(trap_extract)[,c("Corn")],
+                              table(trap_extract)[,c("Cotton")],
+                              table(trap_extract)[,c("Peanuts")],
+                              table(trap_extract)[,c("Soybeans")],
+                              table(trap_extract)[,c("Sorghum")],
+                              table(trap_extract)[,c("Sweet Corn")],
+                              table(trap_extract)[,c("Tobacco")])
+    trap_year$year <- year
+    trap_year$buffer <- buffer
+    
+    trap_year <- project(trap_year, "EPSG:4326")
+    trap_data <- cbind(
+      as.data.frame(trap_year),
+      long = crds(trap_year)[,1],
+      lat = crds(trap_year)[,2]
+    )
+    all_data[[paste0(year, "_", buffer)]] <- trap_data
+  }
+}
+combined_data <- do.call(rbind, all_data)
+write_csv(combined_data, file = paste0(output_dir, "/trap_data_500-5000.csv"))
