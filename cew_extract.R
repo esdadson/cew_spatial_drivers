@@ -208,3 +208,76 @@ for (year in 2020:2023) {
 }
 combined_data <- do.call(rbind, all_data)
 write_csv(combined_data, file = paste0(output_dir, "/trap_data_500-5000.csv"))
+
+#Data Visualization
+
+#2020
+plot(trap_data_2020$long, trap_data_2020$lat, col = col_vals_2020, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2020")
+legend("bottomright", title="catch",legend=levels(intervals_2020),
+       col=rbPal(10), pch=20)
+
+#2021
+plot(trap_data_2021$long, trap_data_2021$lat, col = col_vals_2021, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2021")
+legend("bottomright", title="catch",legend=levels(intervals_2021),
+       col=rbPal(10), pch=20)
+
+# 2022
+plot(trap_data_2022$long, trap_data_2022$lat, col = col_vals_2022, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2022")
+legend("bottomright", title="catch",legend=levels(intervals_2022),
+       col=rbPal(10), pch=20)
+
+# 2023
+plot(trap_data_2023$long, trap_data_2023$lat, col = col_vals_2023, pch = 20,
+     cex = 3, xlab = "Longitude", ylab = "Latitude", 
+     main = "Cumulative CEW Catch 2023")
+legend("bottomright", title="catch",legend=levels(intervals_2023),
+       col=rbPal(10), pch=20)
+
+trap_data_2020 <- trap_data[trap_data$year == 2020, ]
+trap_data_2021 <- trap_data[trap_data$year == 2021, ]
+trap_data_2022 <- trap_data[trap_data$year == 2022, ]
+trap_data_2023 <- trap_data[trap_data$year == 2023, ]
+rbPal <- colorRampPalette(c('blue', 'red'))
+intervals_2020 <- cut(trap_data_2020$cum_CEW_count, breaks = 5)
+col_vals_2020 <- rbPal(10)[as.numeric(intervals_2020)]
+intervals_2021 <- cut(trap_data_2021$cum_CEW_count, breaks = 5)
+col_vals_2021 <- rbPal(10)[as.numeric(intervals_2021)]
+intervals_2022 <- cut(trap_data_2022$cum_CEW_count, breaks = 5)
+col_vals_2022 <- rbPal(10)[as.numeric(intervals_2022)]
+intervals_2023 <- cut(trap_data_2023$cum_CEW_count, breaks = 5)
+
+col_vals_2023 <- rbPal(10)[as.numeric(intervals_2023)]
+
+library(ggplot2)
+nc_map=map_data("county", region = "north carolina")
+ggplot(combined_data, aes(x=long, y=lat)) + 
+  geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
+               linewidth = 1, col = "grey40", fill = NA) + 
+  geom_point(aes(colour = percent_corn, size = cum_CEW_count), shape = 20) + 
+  scale_colour_gradientn(colors = rbPal(10), name = "cumulative CEW \nCatch",
+                         na.value = NA) + 
+  coord_quickmap(xlim = c(min(trap_data$long) - 0.1, max(trap_data$long) + 0.1),
+                 ylim = c(min(trap_data$lat) - 0.1, max(trap_data$lat) + 0.1)) + 
+  facet_wrap(~year)
+
+#linear model
+
+lm_fit <- lm(cum_CEW_count ~ 
+               percent_corn + 
+               percent_cotton + 
+               percent_peanuts + 
+               percent_soybeans + 
+               percent_sorghum + 
+               percent_sweetcorn + 
+               percent_tobacco + 
+               egg_area + 
+               factor(buffer) + 
+               factor(year),  
+             data = combined_data)
+summary(lm_fit)
