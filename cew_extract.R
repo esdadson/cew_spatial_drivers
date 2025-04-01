@@ -156,8 +156,8 @@ for (year in 2020:2023) {
     all_data[[paste0(year, "_", buffer)]] <- trap_data
   }
 }
-combined_data <- do.call(rbind, all_data)
-write_csv(combined_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+data_200_1200 <- do.call(rbind, all_data)
+write_csv(data_200_1200, file = paste0(output_dir, "/traps_extracted_data.csv"))
 
 # Buffer lengths 500 to 5000
 
@@ -206,8 +206,8 @@ for (year in 2020:2023) {
     all_data[[paste0(year, "_", buffer)]] <- trap_data
   }
 }
-combined_data <- do.call(rbind, all_data)
-write_csv(combined_data, file = paste0(output_dir, "/trap_data_500-5000.csv"))
+data_500_5000 <- do.call(rbind, all_data)
+write_csv(data_500_5000, file = paste0(output_dir, "/trap_data_500-5000.csv"))
 
 #Data Visualization
 
@@ -256,7 +256,7 @@ col_vals_2023 <- rbPal(10)[as.numeric(intervals_2023)]
 
 library(ggplot2)
 nc_map=map_data("county", region = "north carolina")
-ggplot(combined_data, aes(x=long, y=lat)) + 
+ggplot(data_500_5000, aes(x=long, y=lat)) + 
   geom_polygon(data = nc_map, aes(x=long, y=lat, group=group), 
                linewidth = 1, col = "grey40", fill = NA) + 
   geom_point(aes(colour = percent_corn, size = cum_CEW_count), shape = 20) + 
@@ -279,5 +279,19 @@ lm_fit <- lm(cum_CEW_count ~
                egg_area + 
                factor(buffer) + 
                factor(year),  
-             data = combined_data)
+             data = data_500_5000)
 summary(lm_fit)
+
+# wide data
+
+library(tidyr)
+trap_wide <- data_500_5000 %>% pivot_wider(
+                           names_from = buffer, 
+                           names_glue = "{buffer}_{.value}",
+                           values_from = c(percent_corn, 
+                                           percent_cotton,
+                                           percent_peanuts,
+                                           percent_sorghum,
+                                           percent_sweetcorn,
+                                           percent_tobacco))
+names(trap_wide)
