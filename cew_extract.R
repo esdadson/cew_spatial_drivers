@@ -91,7 +91,7 @@ for (year in seq(2020, 2023)) {
                                   table(trap_extract)[,c("Sorghum")],
                                   table(trap_extract)[,c("Sweet Corn")],
                                   table(trap_extract)[,c("Tobacco")]))
-  assign(paste0("trap_", year), trap_year)
+  assign(paste0("trap_500", year), trap_year)
 }
 
 trap_vect <- rbind(trap_2020, trap_2021, trap_2022, trap_2023)
@@ -99,6 +99,238 @@ trap_vect <- project(trap_vect, "EPSG:4326")
 trap_data <- cbind(as.data.frame(trap_vect), long = crds(trap_vect)[,1],
                    lat = crds(trap_vect)[,2])
 write.csv(trap_data, file = paste0(output_dir, "/traps_extracted_data.csv"))
+
+# Hard code buffers
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 500)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_500 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_500 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_500 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_500 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_500 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_500 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_500 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_500 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                      table(trap_extract)[,c("Cotton")],
+                                      table(trap_extract)[,c("Peanuts")],
+                                      table(trap_extract)[,c("Soybeans")],
+                                      table(trap_extract)[,c("Sorghum")],
+                                      table(trap_extract)[,c("Sweet Corn")],
+                                      table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 1000)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_1000 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_1000 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_1000 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_1000 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_1000 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_1000 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_1000 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_1000 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                          table(trap_extract)[,c("Cotton")],
+                                          table(trap_extract)[,c("Peanuts")],
+                                          table(trap_extract)[,c("Soybeans")],
+                                          table(trap_extract)[,c("Sorghum")],
+                                          table(trap_extract)[,c("Sweet Corn")],
+                                          table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 1500)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_1500 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_1500 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_1500 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_1500 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_1500 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_1500 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_1500 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_500 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                          table(trap_extract)[,c("Cotton")],
+                                          table(trap_extract)[,c("Peanuts")],
+                                          table(trap_extract)[,c("Soybeans")],
+                                          table(trap_extract)[,c("Sorghum")],
+                                          table(trap_extract)[,c("Sweet Corn")],
+                                          table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 2000)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_2000 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_2000 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_2000 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_2000 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_2000 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_2000 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_2000 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_2000 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                           table(trap_extract)[,c("Cotton")],
+                                           table(trap_extract)[,c("Peanuts")],
+                                           table(trap_extract)[,c("Soybeans")],
+                                           table(trap_extract)[,c("Sorghum")],
+                                           table(trap_extract)[,c("Sweet Corn")],
+                                           table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 2500)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_2500 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_2500 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_2500 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_2500 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_2500 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_2500 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_2500 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_1000 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                           table(trap_extract)[,c("Cotton")],
+                                           table(trap_extract)[,c("Peanuts")],
+                                           table(trap_extract)[,c("Soybeans")],
+                                           table(trap_extract)[,c("Sorghum")],
+                                           table(trap_extract)[,c("Sweet Corn")],
+                                           table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 3000)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_3000 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_3000 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_3000 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_3000 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_3000 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_3000 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_3000 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_3000 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                           table(trap_extract)[,c("Cotton")],
+                                           table(trap_extract)[,c("Peanuts")],
+                                           table(trap_extract)[,c("Soybeans")],
+                                           table(trap_extract)[,c("Sorghum")],
+                                           table(trap_extract)[,c("Sweet Corn")],
+                                           table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 3500)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_3500 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_3500 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_3500 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_3500 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_3500 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_3500 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_3500 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_3500 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                           table(trap_extract)[,c("Cotton")],
+                                           table(trap_extract)[,c("Peanuts")],
+                                           table(trap_extract)[,c("Soybeans")],
+                                           table(trap_extract)[,c("Sorghum")],
+                                           table(trap_extract)[,c("Sweet Corn")],
+                                           table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 4000)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_4000 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_4000 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_4000 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_4000 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_4000 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_4000 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_4000 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_4000 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                           table(trap_extract)[,c("Cotton")],
+                                           table(trap_extract)[,c("Peanuts")],
+                                           table(trap_extract)[,c("Soybeans")],
+                                           table(trap_extract)[,c("Sorghum")],
+                                           table(trap_extract)[,c("Sweet Corn")],
+                                           table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 4500)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_4500 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_4500 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_4500 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_4500 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_4500 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_4500 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_4500 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_4500 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                           table(trap_extract)[,c("Cotton")],
+                                           table(trap_extract)[,c("Peanuts")],
+                                           table(trap_extract)[,c("Soybeans")],
+                                           table(trap_extract)[,c("Sorghum")],
+                                           table(trap_extract)[,c("Sweet Corn")],
+                                           table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
+
+for (year in seq(2020, 2023)) {
+  cdl_data <- rast(paste0(cdl_path, year, "_30m_cdls/", year, "_30m_cdls.tif"))
+  cdl_data <- crop(cdl_data, empty_vect)
+  trap_year <- trap_vect[trap_vect$year == year,]
+  trap_buffer <- buffer(trap_year, 5000)
+  trap_extract <- terra::extract(cdl_data, trap_buffer)
+  trap_year$percent_corn_5000 <- table(trap_extract)[,c("Corn")]/nrow(trap_extract)
+  trap_year$percent_cotton_5000 <- table(trap_extract)[,c("Cotton")]/nrow(trap_extract)
+  trap_year$percent_peanuts_5000 <- table(trap_extract)[,c("Peanuts")]/nrow(trap_extract)
+  trap_year$percent_soybeans_5000 <- table(trap_extract)[,c("Soybeans")]/nrow(trap_extract)
+  trap_year$percent_sorghum_5000 <- table(trap_extract)[,c("Sorghum")]/nrow(trap_extract)
+  trap_year$percent_sweetcorn_5000 <- table(trap_extract)[,c("Sweet Corn")]/nrow(trap_extract)
+  trap_year$percent_tobacco_5000 <- table(trap_extract)[,c("Tobacco")]/nrow(trap_extract)
+  trap_year$egg_area_5000 <- rowSums(cbind(table(trap_extract)[,c("Corn")],
+                                           table(trap_extract)[,c("Cotton")],
+                                           table(trap_extract)[,c("Peanuts")],
+                                           table(trap_extract)[,c("Soybeans")],
+                                           table(trap_extract)[,c("Sorghum")],
+                                           table(trap_extract)[,c("Sweet Corn")],
+                                           table(trap_extract)[,c("Tobacco")]))
+  assign(paste0("trap_", year), trap_year)
+}
 
 # example extracting landscape information
 trap_point <- trap_data[1,]
@@ -275,10 +507,9 @@ lm_fit <- lm(cum_CEW_count ~
                percent_soybeans + 
                percent_sorghum + 
                percent_sweetcorn + 
-               percent_tobacco + 
-               egg_area + 
-               factor(buffer) + 
-               factor(year),  
+               percent_tobacco +
+               factor(buffer) +
+               egg_area,
              data = data_500_5000)
 summary(lm_fit)
 
